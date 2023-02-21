@@ -1,0 +1,32 @@
+version: '2'
+
+networks:
+  library-app-net:
+    driver: bridge
+
+services:
+  library-app:
+    image: '${APP_IMAGE}'
+    build: .
+    container_name: library-app
+    depends_on:
+      - library-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://library-db:5432/${DB_USERNAME}
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_JPA_DATABASE=POSTGRESQL
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_DATASOURCE_INITIALIZATION-MODE=always
+      - SPRING_DATASOURCE_PLATFORM=postgres
+    networks:
+      - library-app-net
+
+  library-db:
+    image: 'postgres:13.6-alpine'
+    container_name: library-app-db
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - library-app-net

@@ -1,0 +1,25 @@
+networks:
+  traefik:
+    external: true
+
+services:
+  library-app:
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.library-app.rule=Host(`app.jonathanarsac.master-sdl.ovh`)"
+      - "traefik.http.routers.library-app.entrypoints=websecure"
+      - "traefik.http.services.library-app.loadbalancer.server.port=${APP_PORT}"
+      - "traefik.http.routers.library-app.tls.certresolver=letsencryptresolver"
+    environment:
+      - "API_ISHTTPS=true"
+  library-db:
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/postgresql/data
+ 
+volumes:
+  db-data:
+    driver: local

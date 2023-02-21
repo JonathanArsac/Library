@@ -1,0 +1,4 @@
+services:
+  library-app:
+    ports:
+      - "${APP_PORT}:8080"
